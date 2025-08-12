@@ -1,6 +1,6 @@
 {% schema %} 
 {
-  "name": "Shoppable Video Stories",
+  "name": "Shoppable Video Section",
   "settings": [
     {
       "type": "text",
@@ -9,86 +9,77 @@
       "default": "Check out these stories 👇"
     }
   ],
-  "blocks": [
-    {
-      "type": "video_item",
-      "name": "Video",
-      "settings": [
-        {
-          "type": "image_picker",
-          "id": "thumbnail",
-          "label": "Thumbnail Image"
-        },
-        {
-          "type": "url",
-          "id": "video_url",
-          "label": "Video URL"
-        },
-        {
-          "type": "text",
-          "id": "caption",
-          "label": "Caption",
-          "default": "Our Product"
-        }
-      ]
-    }
-  ],
-  "max_blocks": 20,
   "presets": [
     {
-      "name": "Shoppable Video Stories Slider",
+      "name": "Shoppable Video Section",
       "category": "Video"
     }
   ]
 }
 {% endschema %}
 
-<h2 style="text-align:center">{{ section.settings.heading }}</h2>
-<div class="video-thumbs">
-  {% for block in section.blocks %}
-    <div class="video-thumb" data-index="{{ forloop.index0 }}">
-
-      <video  autoplay="" playsinline="" muted="muted" preload="none" loop="loop">
-                    <source src="{{ block.settings.video_url }}" type="video/mp4">
-               
-                    </video>
-    </div>
-  {% endfor %}
-</div>
-
-<!-- Popup Modal -->
-<div class="video-modal" id="videoModal">
-  <div class="swiper video-swiper">
-    <div class="swiper-wrapper">
-      {% for block in section.blocks %}
-        <div class="swiper-slide">
-          <video src="{{ block.settings.video_url }}" playsinline></video>
+<div class="page-width">
+  <div class="shopablevideo-section">
+    <h2 class="video-heading">{{ section.settings.heading }}</h2>
+    <div class="video-thumbs">
+      {% for video_url in product.metafields.custom.video_section.value %}
+        <div class="video-thumb" data-index="{{ forloop.index0 }}">
+          <video  autoplay="" playsinline="" muted="muted" preload="none" loop="loop">
+            <source src="{{ video_url }}" type="video/mp4">
+          </video>
         </div>
       {% endfor %}
     </div>
-    <div class="swiper-button-next"></div>
-    <div class="swiper-button-prev"></div>
+    <!-- Popup Modal -->
+    <div class="video-modal" id="videoModal">
+      <div class="swiper video-swiper">
+        <div class="swiper-wrapper">
+          {% for video_url in product.metafields.custom.video_section.value %}
+            <div class="swiper-slide">
+              <video src="{{ video_url }}" playsinline></video>
+            </div>
+          {% endfor %}
+        </div>
+        <div class="swiper-button-next">
+          <svg data-v-8d1c4d9c="" width="20" height="12" fill="none" xmlns="http://www.w3.org/2000/svg" class=""><path data-v-8d1c4d9c="" d="M10.884 10.884a1.25 1.25 0 01-1.768 0L1.161 2.929A1.25 1.25 0 112.93 1.16L10 8.232l7.071-7.07a1.25 1.25 0 111.768 1.767l-7.955 7.955zM11.25 9v1h-2.5V9h2.5z"></path></svg>
+        </div>
+        <div class="swiper-button-prev">
+          <svg data-v-8d1c4d9c="" width="20" height="12" fill="none" xmlns="http://www.w3.org/2000/svg" class=""><path data-v-8d1c4d9c="" d="M10.884 1.116a1.25 1.25 0 00-1.768 0L1.161 9.071A1.25 1.25 0 102.93 10.84L10 3.768l7.071 7.07a1.25 1.25 0 101.768-1.767l-7.955-7.955zM11.25 3V2h-2.5v1h2.5z"></path></svg>
+        </div>
+      </div>
+
+      <!-- Mute toggle button -->
+      <button id="muteToggle" aria-label="Mute/unmute video" title="Mute/unmute video">
+        🔈
+      </button>
+
+      <span class="close-modal">×</span>
+    </div>
   </div>
-
-  <!-- Mute toggle button -->
-  <button id="muteToggle" aria-label="Mute/unmute video" title="Mute/unmute video" style="display:none; position:absolute; bottom: 40px; right: 50%; transform: translateX(50%); background: rgba(0,0,0,0.5); border:none; color:#fff; padding: 8px 12px; border-radius: 5px; cursor:pointer; z-index:10000;">
-    🔈
-  </button>
-
-  <span class="close-modal">×</span>
 </div>
 
 <!-- Swiper CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 
 <style>
-.video-thumbs {
-  display: flex;
-  gap: 40px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
 
+.shopablevideo-section {
+    padding: 40px 0px;
+}
+.video-heading{
+
+}
+.shopablevideo-section .video-thumbs {
+    display: flex;
+    gap: 20px;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow: auto;
+}
+}
+.video-thumb {
+    position: relative;
+}
 .video-thumb {
   position: relative;
   text-align: center;
@@ -96,10 +87,11 @@
 }
 
 .video-thumb video {
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   border: 3px solid #0d3b66; /* border color */
+  padding:3px;
   object-fit: cover;
   display: block;
 }
@@ -126,38 +118,14 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
-  background: rgba(0,0,0,0.25);
   z-index: 1;
   pointer-events: none;
 }
 
-.video-thumb p {
-  margin-top: 8px;
-  font-size: 14px;
-  color: #333;
-}
 
-
-.video-thumbs {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-.video-thumb {
-  cursor: pointer;
-  text-align: center;
-}
-.video-thumb img {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: 3px solid #0d3b66;
-  object-fit: cover;
-}
 .video-modal {
   display: none;
   position: fixed;
@@ -172,34 +140,81 @@
   justify-content: center;
 }
 .video-swiper {
-  width: 80%;
+  width: 100%;
 }
 .swiper-slide {
   display: flex;
   justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 .swiper-slide video {
-  max-height: 80vh;
-  border-radius: 10px;
+  max-height: 65vh;
+  border-radius: 20px;
 }
+.swiper-slide.swiper-slide-active video {
+    max-height: 80vh;
+}
+
 
 /* Mute button styles */
 #muteToggle {
   font-size: 1.5rem;
   user-select: none;
   transition: background 0.3s ease;
-}
-#muteToggle:hover {
-  background: rgba(0,0,0,0.8);
+  display:none; position:absolute; bottom: 20%; right: 41%; transform: translateX(41%); background: transparent; border:none; color:#fff;  border-radius: 5px; cursor:pointer; z-index:10000;
 }
 
 .close-modal {
-  position: absolute;
-  top: 20px;
-  right: 40px;
-  font-size: 2rem;
-  color: white;
-  cursor: pointer;
+    position: absolute;
+    top: 10%;
+    right: 41%;
+    transform: translateX(41%);
+    font-size: 2rem;
+    color: white;
+    cursor: pointer;
+    z-index:10000;
+}
+.swiper-button-next {
+    right: 31%;
+    color:#fff;
+}
+.swiper-button-prev {
+   left: 30%;
+     color:#fff;
+}
+.swiper-button-disabled {
+    display: none;
+}
+
+@media (max-width:767px) {
+  .video-swiper {
+    width: 90%;
+}
+ .swiper-button-next {
+    right: 0%;
+}
+.swiper-button-prev {
+    left: 0%;
+}
+
+.close-modal {
+    right: 10%;
+    transform: translateX(10%);
+ 
+}
+
+ #muteToggle {
+ right: 10%; transform: translateX(10%); 
+} 
+
+
+
+
+}
+
+button#ProductSubmitButton-template--25161406251275__main {
+    pointer-events: none;
 }
 </style>
 
@@ -253,17 +268,24 @@ document.addEventListener("DOMContentLoaded", function(){
       modal.classList.add('active');
 
       if (!swiper) {
-        swiper = new Swiper('.video-swiper', {
-          slidesPerView: 3,
+      
+            swiper = new Swiper('.video-swiper', {
+          slidesPerView: 1, // Default for mobile
           centeredSlides: true,
           navigation: {
             nextEl: '.swiper-button-next',
             prevEl: '.swiper-button-prev',
           },
+          breakpoints: {
+            768: { // Tablet and above
+              slidesPerView: 3
+            }
+          },
           on: {
             slideChange: playOnlyActive
           }
         });
+
 
         // Add click events for slides
         swiper.slides.forEach((slide, i) => {
